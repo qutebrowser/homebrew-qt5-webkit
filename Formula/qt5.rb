@@ -20,6 +20,11 @@ class Qt5 < Formula
 
   head "https://code.qt.io/qt/qt5.git", :branch => "5.6", :shallow => false
 
+  resource "qtwebkit" do
+    url "http://download.qt.io/community_releases/5.6/5.6.0/qtwebkit-opensource-src-5.6.0.tar.xz"
+    sha256 "9ca72373841f3a868a7bcc696956cdb0ad7f5e678c693659f6f0b919fdd16dfe"
+  end
+
   bottle do
     sha256 "c20268ac2ca94cb2daa0da352ad3ca8f2a16b0429c00e2fa444bc1f6b5488f6f" => :el_capitan
     sha256 "9924fa2ac0cd8b661c861f81696679ba10496b91a35ee706033739816bb5bb90" => :yosemite
@@ -133,6 +138,14 @@ class Qt5 < Formula
     libexec.mkpath
     Pathname.glob("#{bin}/*.app") do |app|
       mv app, libexec/"#{app.basename(".app")}-qt5.app"
+    end
+
+    # Install QtWebKit
+    resource("qtwebkit").stage do
+      system "#{prefix}/bin/qmake"
+      system "make"
+      ENV.j1
+      system "make", "install"
     end
   end
 
